@@ -115,6 +115,7 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(found_product.name, product.name)
         self.assertEqual(found_product.description, product.description)
         self.assertEqual(found_product.price, product.price)
+
     def test_update_a_product(self):
         """It should Update a Product"""
         product= ProductFactory()
@@ -132,3 +133,17 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(len(products), 1)
         self.assertEqual(products[0].id, original_id)
         self.assertEqual(products[0].description, "testing")
+    
+    def test_delete_a_product(self):
+        """It should Delete a Product"""
+        product= ProductFactory()
+        product.id= None
+        product.create()
+        self.assertIsNotNone(product.id)
+        # Verify only one was created
+        self.assert(len(Product.all()), 1)
+        # Delete a product
+        product.delete()
+        self.assertEqual(len(Product.all()), 0)
+
+
