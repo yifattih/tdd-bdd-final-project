@@ -107,7 +107,7 @@ class TestProductModel(unittest.TestCase):
         """It should Read a Product"""
         product= ProductFactory()
         product.id= None
-        product.Create()
+        product.create()
         self.assertIsNotNone(product.id)
         # Fetch it back
         found_product= Product.find(product.id)
@@ -141,13 +141,13 @@ class TestProductModel(unittest.TestCase):
         product.create()
         self.assertIsNotNone(product.id)
         # Verify only one was created
-        self.assert(len(Product.all()), 1)
+        self.assertEqual(len(Product.all()), 1)
         # Delete a product
         product.delete()
         self.assertEqual(len(Product.all()), 0)
 
     def test_list_all_products(self):
-        """"It should List all Products""""
+        """It should List all Products"""
         products= Product.all()
         self.assertEqual(products, [])
         # Create 5 products and save
