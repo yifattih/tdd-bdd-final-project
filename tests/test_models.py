@@ -105,12 +105,12 @@ class TestProductModel(unittest.TestCase):
     # ADD YOUR TEST CASES HERE
     def test_read_a_product(self):
         """It should Read a Product"""
-        product= ProductFactory()
-        product.id= None
+        product = ProductFactory()
+        product.id = None
         product.create()
         self.assertIsNotNone(product.id)
         # Fetch it back
-        found_product= Product.find(product.id)
+        found_product = Product.find(product.id)
         self.assertEqual(found_product.id, product.id)
         self.assertEqual(found_product.name, product.name)
         self.assertEqual(found_product.description, product.description)
@@ -118,26 +118,31 @@ class TestProductModel(unittest.TestCase):
 
     def test_update_a_product(self):
         """It should Update a Product"""
-        product= ProductFactory()
-        product.id= None
+        product = ProductFactory()
+        product.id = None
         product.create()
         self.assertIsNotNone(product.id)
         # Change and save
-        product.description= "testing"
-        original_id= product.id
+        product.description = "testing"
+        original_id = product.id
         product.update()
         self.assertEqual(product.id, original_id)
         self.assertEqual(product.description, "testing")
         # Fetch back, check ID is the same
-        products= Product.all()
+        products = Product.all()
         self.assertEqual(len(products), 1)
         self.assertEqual(products[0].id, original_id)
         self.assertEqual(products[0].description, "testing")
-    
+
+        # Test data validation Exeption
+        with self.assertRaises(Exception):
+            product.id = ""
+            product.update()
+
     def test_delete_a_product(self):
         """It should Delete a Product"""
-        product= ProductFactory()
-        product.id= None
+        product = ProductFactory()
+        product.id = None
         product.create()
         self.assertIsNotNone(product.id)
         # Verify only one was created
@@ -148,14 +153,14 @@ class TestProductModel(unittest.TestCase):
 
     def test_list_all_products(self):
         """It should List all Products"""
-        products= Product.all()
+        products = Product.all()
         self.assertEqual(products, [])
         # Create 5 products and save
         for _ in range(5):
-            product= ProductFactory()
+            product = ProductFactory()
             product.create()
         # Check get back 5 products
-        products= Product.all()
+        products = Product.all()
         self.assertEqual(len(products), 5)
 
     def test_find_by_name(self):
@@ -169,7 +174,7 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(found.count(), count)
         for product in found:
             self.assertEqual(product.name, name)
-    
+
     def test_find_by_availability(self):
         """It should Find Products by Availability"""
         products = ProductFactory.create_batch(10)
