@@ -109,6 +109,7 @@ def list_products():
     # get name and category parameters
     name = request.args.get("name")
     category = request.args.get("category")
+    avaiable = request.args.get("available")
 
     # test if received "name" query parameter
     if name:
@@ -122,6 +123,16 @@ def list_products():
         # create enum from string
         category_values = getattr(Category, category.upper())
         products = Product.find_by_category(category_values)
+
+    # test if received "available" parameter
+    elif avaiable:
+        app.logger.info("Find by availability: %s", avaiable)
+
+        # boolean from string
+        avaiable_value = avaiable.lower() in ["true", "yes", "1"]
+
+        # retrieve products match available value
+        products = Product.find_by_availability(avaiable_value)
     else:
         app.logger.info("Find all")
         products = Product.all()
