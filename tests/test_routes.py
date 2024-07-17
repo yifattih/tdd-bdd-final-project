@@ -28,6 +28,7 @@ import os
 import logging
 from decimal import Decimal
 from unittest import TestCase
+from urllib.parse import quote_plus
 from service import app
 from service.common import status
 from service.models import db, init_db, Product
@@ -249,6 +250,66 @@ class TestProductRoutes(TestCase):
         # check product count is one less than initial count
         self.assertEqual(new_count, products_count - 1)
 
+    def test_query_by_name(self):
+        """It should Query Products by its name"""
+
+        # create 5 products
+        products = self._create_products(count=5)
+
+        # extract name of first product
+        test_name = products[0].name
+
+        # count products with same name
+        name_count = len([product for product in products if product.name == test_name])
+
+        # get request
+        response = self.client.get(BASE_URL, query_string=f"name={quote_plus(test_name)}")
+
+        # check request was successful
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # retrieve json data
+        data = response.get_json()
+
+        # check length data list is same as name count
+        self.assertEqual(len(data), name_count)
+
+        # check if products in data list match test name
+        for product in data:
+            self.assertEqual(product["name"], test_name)
+
+    def test_query_by_category(self):
+        """It should Query Products by category"""
+
+        # create products
+        products = self._create_products(10)
+
+        # retrieve category of first product in the list
+        category = products[0].category
+
+        # create list with products matching category
+        found = [product for product in products if product.category == category]
+
+        # count found products matching category
+        found_count = len(found)
+
+        # debug message products found
+        logging.debug("Found Products [%d] %s", found_count, found)
+
+        # get request for category
+        response = self.client.get(BASE_URL, query_string=f"category={category.name}")
+
+        # check successful request
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # retrieve response data
+        data = response.get_json()
+
+        # check if length of data is same as found count
+        self.assertEqual(len(data), found_count)
+
+        for product in data:
+            self.assertEqual(product["category"], category.name)
     ######################################################################
     # Utility functions
     ######################################################################
