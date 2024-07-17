@@ -174,6 +174,24 @@ class TestProductRoutes(TestCase):
         data = response.get_json()
         self.assertEqual(data["name"], test_product.name)
 
+    def test_get_product_list(self):
+        """It should Get a list of Products"""
+
+        # create products list
+        self._create_products(count=5)
+
+        # get response
+        response = self.client.get(BASE_URL)
+
+        # check if created
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # store response data
+        data = response.get_json()
+
+        # check length of data is equal number of products created
+        self.assertEqual(len(data), 5)
+
     def test_get_product_not_found(self):
         """It should not Read a Product that is not found"""
         product_id = 0
@@ -181,7 +199,7 @@ class TestProductRoutes(TestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         data = response.get_json()
         self.assertIn("was not found", data["message"])
-    
+
     def test_update_product(self):
         """It should Update an existing Product entry"""
         # create product
