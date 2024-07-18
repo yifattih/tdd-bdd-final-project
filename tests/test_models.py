@@ -198,3 +198,14 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(found.count(), count)
         for product in found:
             self.assertEqual(product.category, category)
+
+    def test_deserialize(self):
+        """It should rise DataValidationError"""
+        product = ProductFactory()
+        serialized_product = product.serialize()
+        serialized_product["available"] = True
+        self.assertEqual(serialized_product["available"], True)
+        # Test data validation Exeption
+        with self.assertRaises(Exception):
+            serialized_product["available"] = ""
+            deserialized_product = product.deserialize(data=serialized_product)
