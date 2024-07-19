@@ -199,8 +199,8 @@ class TestProductModel(unittest.TestCase):
         for product in found:
             self.assertEqual(product.category, category)
 
-    def test_deserialize(self):
-        """It should rise DataValidationError"""
+    def test_deserialize_invalid_available(self):
+        """It should rise Exception for invalid available type value"""
         product = ProductFactory()
         serialized_product = product.serialize()
         serialized_product["available"] = True
@@ -208,4 +208,20 @@ class TestProductModel(unittest.TestCase):
         # Test data validation Exeption
         with self.assertRaises(Exception):
             serialized_product["available"] = ""
-            deserialized_product = product.deserialize(data=serialized_product)
+            product.deserialize(data=serialized_product)
+
+    def test_deserialize_missing_item(self):
+        """It should rise Exception for missing item"""
+        product = ProductFactory()
+        serialized_product = product.serialize()
+        del serialized_product["available"]
+        # Test data validation Exception
+        with self.assertRaises(Exception):
+            product.deserialize(data=serialized_product)
+
+    def test_deserialize_bad_no_data(self):
+        """It should rise Exception for bad data"""
+        product = ProductFactory()
+        # Test data validation Exception
+        with self.assertRaises(Exception):
+            product.deserialize(data="")
