@@ -205,7 +205,7 @@ class TestProductRoutes(TestCase):
         """It should Update an existing Product entry"""
         # create product
         test_product = ProductFactory()
-        
+
         # send post request
         response = self.client.post(BASE_URL, json=test_product.serialize())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -215,11 +215,11 @@ class TestProductRoutes(TestCase):
         new_product["description"] = "Unknown"
         response = self.client.put(f"{BASE_URL}/{new_product['id']}", json=new_product)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        
+
         # assert if product was updated
         updated_product = response.get_json()
         self.assertEqual(updated_product["description"], "Unknown")
-        
+
         # update product that dont exist
         response = self.client.put(f"{BASE_URL}/0", json=new_product)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
